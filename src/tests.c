@@ -15,7 +15,7 @@ void tearDown(void)
 }
 
 void test_level1(){
-    TEST_ASSERT_EQUAL(0, adc_hysteresis(8));   
+    TEST_ASSERT_EQUAL(0, adc_hysteresis(8));
 }
 
 void test_level_up(){
