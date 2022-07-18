@@ -6,9 +6,19 @@
 #include "log.h"
 #include "tests.h"
 #include "adc_hysteresis.h"
+#include "unity.h"
 
 #define test_ok     "TEST_OK"
 #define test_fail   "TEST_FAILED"
+
+// -----------------------------------------------------------------------------
+// usint unity
+// -----------------------------------------------------------------------------
+void test_level_up_to_15(void)
+{
+    TEST_ASSERT_EQUAL(0, adc_hysteresis(10));    
+}
+
 
 void check(bool condiction, char *message, ...){
     if(condiction){
