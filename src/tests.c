@@ -14,12 +14,19 @@
 // -----------------------------------------------------------------------------
 // usint unity
 // -----------------------------------------------------------------------------
+/* Required by the unity test framework */
+void setUp(){}
+/* Required by the unity test framework */
+void tearDown(){}
+
 void test_level_up_to_15(void)
 {
     TEST_ASSERT_EQUAL(0, adc_hysteresis(10));    
 }
 
-
+// -----------------------------------------------------------------------------
+// customized
+// -----------------------------------------------------------------------------
 void check(bool condiction, char *message, ...){
     if(condiction){
         log_success("[%s] %s\n", message, test_ok);
@@ -94,4 +101,19 @@ void test_level_mix(){
     status = status && (adc_hysteresis(adc_value_array_mix[8]) == 0) ? true : false;
     status = status && (adc_hysteresis(adc_value_array_mix[9]) == 2) ? true : false;
     printf("[%s] mix\n", (status == true) ? test_ok : test_fail);
+}
+
+// -----------------------------------------------------------------------------
+// usint unity
+// -----------------------------------------------------------------------------
+int test_main(void)
+{
+    /* Initiate the Unity Test Framework */
+    UNITY_BEGIN();
+
+    /* Run Test functions */
+    RUN_TEST(test_level_up_to_15);
+    
+    /* Close the Unity Test Framework */
+    return UNITY_END();
 }
