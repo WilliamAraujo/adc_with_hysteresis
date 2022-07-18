@@ -1,6 +1,5 @@
 SRC = src/adc_hysteresis.c \
 	  src/tests.c \
-	  src/log.c \
 	  unity/unity.c \
 	  main.c
 
