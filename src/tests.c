@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-// #include <stdarg.h>
-// #include <time.h>
-// #include "log.h"
 #include "tests.h"
 #include "unity.h"
 #include "adc_hysteresis.h"
