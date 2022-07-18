@@ -1,27 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <stdarg.h>
-#include <time.h>
-#include "log.h"
+// #include <stdarg.h>
+// #include <time.h>
+// #include "log.h"
 #include "tests.h"
+#include "unity.h"
 #include "adc_hysteresis.h"
 
-#define test_ok     "TEST_OK"
-#define test_fail   "TEST_FAILED"
-
-void check(bool condiction, char *message, ...){
-    if(condiction){
-        log_success("[%s] %s\n", message, test_ok);
-    }
-    else{
-        log_error("[%s]\n", test_fail);
-    }
+void setUp(void)
+{
+  /* This is run before EACH TEST */
 }
 
-void test_level1(unsigned int value){
-    printf("[%s] %d value\n", (value < 10) ? test_ok : test_fail, value);
-    check(value < 10, "test_level1");   
+void tearDown(void)
+{
+}
+
+void test_level1(){
+    TEST_ASSERT_EQUAL(0, adc_hysteresis(8));   
 }
 
 void test_level_up(){
@@ -42,12 +39,12 @@ void test_level_up(){
         }
         else if(adc_value <= 100 && status == true){
             status = status && (adc_hysteresis(adc_value) == 4);
-        }  
+        }
     }
-    printf("[%s] 0 to %d\n", (status == true) ? test_ok : test_fail, adc_value);
+    TEST_ASSERT_EQUAL(status, true);
 }
 
-void test_level_dow(){
+void test_level_down(){
     bool status = true;
     unsigned int adc_value = 0;
     for(adc_value=100; adc_value>=1; adc_value--){
@@ -67,7 +64,7 @@ void test_level_dow(){
             status = status && (adc_hysteresis(adc_value) == 0);
         }  
     }
-    printf("[%s] 100 to %d\n", (status == true) ? test_ok : test_fail, adc_value);
+    TEST_ASSERT_EQUAL(status, true);    
 }
 
 void test_level_mix(){
@@ -83,5 +80,17 @@ void test_level_mix(){
     status = status && (adc_hysteresis(adc_value_array_mix[7]) == 1) ? true : false;
     status = status && (adc_hysteresis(adc_value_array_mix[8]) == 0) ? true : false;
     status = status && (adc_hysteresis(adc_value_array_mix[9]) == 2) ? true : false;
-    printf("[%s] mix\n", (status == true) ? test_ok : test_fail);
+    TEST_ASSERT_EQUAL(status, true);
+}
+
+void test_main(void){
+    /* Initiate the Unity Test Framework */
+    UNITY_BEGIN();
+    /* Run Test functions */
+    RUN_TEST(test_level_up);
+    RUN_TEST(test_level_down);
+    RUN_TEST(test_level_mix);    
+    RUN_TEST(test_level1);
+    /* Close the Unity Test Framework */
+    UNITY_END();    
 }

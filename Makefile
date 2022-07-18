@@ -1,33 +1,21 @@
-INCLUDE = ./include
-LIB	    = ./lib
-SRC     = ./src
+SRC = src/adc_hysteresis.c \
+	  src/tests.c \
+	  src/log.c \
+	  unity/unity.c \
+	  main.c
 
 FLAGS = -o3 -Wall
-LIBS  = -led -L $(LIB)
 
-all: libed myapps
+INC = -Iunity \
+	  -Iinclude
 
-libed: \
-	adc_hysteresis.o \
-	tests.o \
-	log.o
-	ar -rcs $(LIB)/libed.a *.o
+PROJECT_NAME = adc_hysteresis.out
 
-myapps: clean_apps \
-	main
+$(PROJECT_NAME): $(SRC)
+	gcc $(SRC) $(FLAGS) $(INC) -o $(PROJECT_NAME)
 
-%.o: $(SRC)/%.c $(INCLUDE)/%.h
-	gcc $(FLAGS) -c $< -I $(INCLUDE) -o $@
-
-%: %.c
-	gcc $(FLAGS) $< $(LIBS) -I $(INCLUDE) -o $@
-
-run:
-	./main
+run: $(PROJECT_NAME)
+	./${PROJECT_NAME}
 
 clean:
-	rm -rf $(LIB)/* *.o \
-	main
-
-clean_apps:
-	rm -rf main
+	rm -rf $(PROJECT_NAME)
