@@ -1,9 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "tests.h"
-#include "unity.h"
-#include "adc_hysteresis.h"
+
+#define MIN_ADC_VALUE     0
+#define MAX_ADC_VALUE     100
+#define ADC_LEVEL_0       0
+#define ADC_LEVEL_1       1
+#define ADC_LEVEL_2       2
+#define ADC_LEVEL_3       3
+#define ADC_LEVEL_4       4
+#define UPPER_THRESHOLD_1 15
+#define UPPER_THRESHOLD_2 40
+#define UPPER_THRESHOLD_3 65
+#define UPPER_THRESHOLD_4 90
+#define DOWN_THRESHOLD_1  10
+#define DOWN_THRESHOLD_2  35
+#define DOWN_THRESHOLD_3  60
+#define DOWN_THRESHOLD_4  85
 
 void setUp(void)
 {
@@ -14,80 +25,67 @@ void tearDown(void)
 {
 }
 
-void test_level1(){
-    TEST_ASSERT_EQUAL(0, adc_hysteresis(8));
-}
-
-void test_level_up(){
-    bool status = true;
-    unsigned int adc_value = 0;
-    for(adc_value=0; adc_value<100; adc_value++){
-        if(adc_value < 15 && status == true){
-            status = (adc_hysteresis(adc_value) == 0) ? true : false;
+void test_level_up_0_to_100(){
+    for(int adc_value=MIN_ADC_VALUE; adc_value<=MAX_ADC_VALUE; adc_value++){
+        if(adc_value < UPPER_THRESHOLD_1){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_0);
         }
-        else if(adc_value < 40 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 1);
+        else if(adc_value < UPPER_THRESHOLD_2){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_1);
         }
-        else if(adc_value < 65 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 2);
+        else if(adc_value < UPPER_THRESHOLD_3){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_2);
         }
-        else if(adc_value < 90 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 3);
+        else if(adc_value < UPPER_THRESHOLD_4){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_3);
         }
-        else if(adc_value <= 100 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 4);
+        else if(adc_value <= MAX_ADC_VALUE){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_4);
         }
     }
-    TEST_ASSERT_EQUAL(status, true);
 }
 
 void test_level_down(){
-    bool status = true;
-    unsigned int adc_value = 0;
-    for(adc_value=100; adc_value>=1; adc_value--){
-        if(adc_value > 85 && status == true){
-            status = (adc_hysteresis(adc_value) == 4) ? true : false;
+    for(int adc_value=MAX_ADC_VALUE; adc_value >= MIN_ADC_VALUE; adc_value--){
+        if(adc_value > DOWN_THRESHOLD_4){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_4);
         }
-        else if(adc_value > 60 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 3);
+        else if(adc_value > DOWN_THRESHOLD_3){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_3);
         }
-        else if(adc_value > 35 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 2);
+        else if(adc_value > DOWN_THRESHOLD_2){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_2);
         }
-        else if(adc_value > 10 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 1);
+        else if(adc_value > DOWN_THRESHOLD_1){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_1);
         }
-        else if(adc_value <= 10 && status == true){
-            status = status && (adc_hysteresis(adc_value) == 0);
+        else if(adc_value <= DOWN_THRESHOLD_1){
+            TEST_ASSERT_EQUAL(adc_hysteresis(adc_value), ADC_LEVEL_0);
         }  
-    }
-    TEST_ASSERT_EQUAL(status, true);    
+    } 
 }
 
 void test_level_mix(){
-    bool status = true;
-    u_int16_t adc_value_array_mix[10] = {50, 8, 50, 8, 99, 32, 99, 32, 1, 42};
-    status = status && (adc_hysteresis(adc_value_array_mix[0]) == 2) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[1]) == 0) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[2]) == 2) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[3]) == 0) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[4]) == 4) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[5]) == 1) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[6]) == 4) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[7]) == 1) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[8]) == 0) ? true : false;
-    status = status && (adc_hysteresis(adc_value_array_mix[9]) == 2) ? true : false;
-    TEST_ASSERT_EQUAL(status, true);
+    int adc_value_array_mix[10] = {50, 8, 50, 8, 99, 32, 99, 32, 1, 42};
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[0]), ADC_LEVEL_2);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[1]), ADC_LEVEL_0);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[2]), ADC_LEVEL_2);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[3]), ADC_LEVEL_0);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[4]), ADC_LEVEL_4);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[5]), ADC_LEVEL_1);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[6]), ADC_LEVEL_4);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[7]), ADC_LEVEL_1);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[8]), ADC_LEVEL_0);
+    TEST_ASSERT_EQUAL(adc_hysteresis(adc_value_array_mix[9]), ADC_LEVEL_2);
 }
 
 void test_main(void){
     /* Initiate the Unity Test Framework */
     UNITY_BEGIN();
     /* Run Test functions */
-    RUN_TEST(test_level_up);
+    RUN_TEST(test_level_up_0_to_100);
     RUN_TEST(test_level_down);
-    RUN_TEST(test_level_mix);    
-    RUN_TEST(test_level1);
+    RUN_TEST(test_level_mix);
     /* Close the Unity Test Framework */
-    UNITY_END();    
+    UNITY_END();
 }

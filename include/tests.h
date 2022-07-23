@@ -1,6 +1,9 @@
 #ifndef TESTS_H
 #define TESTS_H
 
+#include "unity.h"
+#include "adc_hysteresis.h"
+
 /**
  * @brief Unity test for validation of adc_hysteresis.
  *
