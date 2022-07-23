@@ -1,7 +1,7 @@
 SRC = src/adc_hysteresis.c \
 	  src/tests.c \
 	  unity/unity.c \
-	  main.c
+	  src/main.c
 
 FLAGS = -o3 -Wall
 
